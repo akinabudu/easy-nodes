@@ -8,8 +8,8 @@ export const paymentMethod = new Menu<MyContext>("pay-method")
 .text("Make Payment on Base", async (ctx) => {
   await ctx.reply(`Payment loading...`)
   const orderId = generateOrderId()
-  mySesssion[ctx.from?.id!].instance!.orderId = orderId
-  mySesssion[ctx.from?.id!].instance!.orderDescription = "Payment for the instance"
+  mySesssion[ctx.from!.id!].instance!.orderId = orderId
+  mySesssion[ctx.from!.id!].instance!.orderDescription = "Payment for the instance"
   const totalCost = mySesssion[ctx.from?.id!].instance!.instanceTotalCost!
   // await NowPayments(ctx,totalCost,"btc",orderId).then(async(res:any)=>{
   //  await pollPaymentStatus(ctx,res,mySesssion[ctx.from?.id!].instance!.orderId!)

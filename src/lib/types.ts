@@ -3,18 +3,19 @@ import type { ConversationFlavor } from "@grammyjs/conversations";
 import type { Context } from "grammy";
 
 export interface SessionData {
-  firstName?: string;
-  lastName?: string;
   email?: string;
-  tgId?: number;
+  tgId?: string;
   tgUsername?: string;
   polygonAddress?: string;
   polygonPrivateKey?: string;
   solanaAddress?: string;
   solanaPrivateKey?: string;
+  baseAddress?: string;
+  basePrivateKey?: string;
   instance?: {
+    instanceDomain: string;
     instanceId: string;
-    instanceIp: string;
+    instanceIp: string | undefined;
     instanceStatus: "active" | "inactive";
     instanceName: string;
     instanceDuration: number;
@@ -26,7 +27,9 @@ export interface SessionData {
     instanceDateInitiated: string
     instanceDateExpiry: string
     instanceUsername: string
-    instancePassword: string
+    instancePassword: string;
+    isInstanceTestnet: boolean;
+    instanceEthRpcUrl: string;
   };
 }
 

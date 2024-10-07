@@ -1,6 +1,6 @@
 import { airtable, config } from "../lib/config";
 
-export async function getWalletAddress(tgId: number, network: string):Promise<string | null> {
+export async function getWalletAddress(tgId: string, network: string):Promise<string | null> {
   try {
     const records = await airtable(config.airtableUserTableName)
       .select({
@@ -12,9 +12,12 @@ export async function getWalletAddress(tgId: number, network: string):Promise<st
       if (network === "polygon") {
         const polygonAddress = records[0].get("polygonAddress");
         return polygonAddress as string;
-      } else {
+      } else if (network === "solana") {
         const solanaAddress = records[0].get("solanaAddress");
         return solanaAddress as string;
+      } else if (network === "base") {
+        const baseAddress = records[0].get("baseAddress");
+        return baseAddress as string;
       }
     }
 

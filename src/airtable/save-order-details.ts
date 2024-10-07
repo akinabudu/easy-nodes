@@ -28,6 +28,7 @@ export async function SaveOrderDetails( data: SessionData) {
             instanceDateExpiry: `${data.instance?.instanceDateExpiry!}`,
             polygonAddress: `${data?.polygonAddress!}`,
             solanaAddress: `${data?.solanaAddress!}`,
+            baseAddress: `${data?.baseAddress!}`,
           },
         },
       ]).then(async(res)=>{

@@ -10,9 +10,6 @@ import { BaseUSDCService } from "../payments/base-payments/base.payment";
 export const config = {
   botToken: String(process.env.BOT_TOKEN),
 
-  tonEndpoint: String(process.env.TON_ENDPOINT),
-  tonKey: String(process.env.TON_APIKEY),
-
   airatableApiKey: String(process.env.AIRTABLE_API_KEY),
   airtableBaseId: String(process.env.AIRTABLE_BASE_ID),
   airtableUrl: String(process.env.AIRTABLE_URL),
@@ -21,16 +18,8 @@ export const config = {
   airtableUserTableId: String(process.env.AIRTABLE_USER_TABLEID),
   airtableUserTableName: String(process.env.AIRTABLE_USER_TABLENAME),
 
-
-  entryFee: 10, // in TON
-  annualFee: 50, // in TON
   adminUserId: Number(process.env.ADMIN_USER_ID),
 
-  paystackSecret: String(process.env.PAYSTACK_SECRET_KEY),
-  paystackPublic: String(process.env.PAYSTACK_PUBLIC_KEY),
-
-  nowpaymentsApiKey: String(process.env.NOWPAYMENTS_API_KEY),
-  nowpaymentsUrl: String(process.env.NOWPAYMENTS_URL),
 
 };
 // Initialize clients

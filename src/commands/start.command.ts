@@ -9,7 +9,7 @@ export async function StartCommand(ctx: CommandContext<MyContext>) {
   if (ctx.from!.is_bot || !ctx.hasChatType("private")) {
     await ctx.reply(`Not Allowed`);
   } else {
-    ctx.session.tgId = ctx.from!.id;
+    ctx.session.tgId = ctx.from!.id.toString();
     let memberUsename = (ctx.session.tgUsername = ctx.from!.username);
     // console.log(ctx.session.membersId);
     await ctx.reply(`Hi ${memberUsename}`);

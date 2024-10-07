@@ -19,27 +19,27 @@ export let mySesssion: mySessionData = {};
 bot.use(
   session({
     initial: (): SessionData => ({
-      tgId: undefined,
+      tgId: "",
       tgUsername: "",
-      firstName: "",
-      lastName: "",
       email: "",
       instance: {
+        instanceDomain: "",
         instanceId: "",
         instanceIp: "",
         instanceStatus: "inactive",
         instanceName: "",
         instanceDuration: 1,
-        instanceType: "t4g.small",
+        instanceType: "t4g.xlarge",
         paymentStatus: "unpaid",
         instanceTotalCost: 0,
         orderId: "",
         orderDescription: "",
         instanceDateInitiated: new Date().toISOString(),
-        instanceDateExpiry: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString(), // 30 days from now as default
+        instanceDateExpiry: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(), // 7 days from now as default
         instanceUsername: "",
         instancePassword: "",
-
+        isInstanceTestnet: false,
+        instanceEthRpcUrl: "",
       },
     }),
   })
@@ -70,10 +70,10 @@ bot.api.setMyCommands([
     command: "get_running",
     description: "Get running instances",
   },
-  {
-    command: "stop_instance",
-    description: "Stop an instance",
-  },
+  // {
+  //   command: "stop_instance",
+  //   description: "Stop an instance",
+  // },
   {
     command: "extend_instance",
     description: "Extend an instance",

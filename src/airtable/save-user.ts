@@ -12,13 +12,13 @@ export async function SaveUser(ctx: MyContext, data: SessionData) {
           fields: {
             tgId: `${data.tgId!}`,
             tgUsername: `${data.tgUsername!}`,
-            firstName: `${data.firstName!}`,
-            lastName: `${data.lastName!}`,
             email: `${data.email!}`,
             polygonAddress: `${data.polygonAddress!}`,
             solanaAddress: `${data.solanaAddress!}`,
             polygonPrivateKey: `${data.polygonPrivateKey!}`,
             solanaPrivateKey: `${data.solanaPrivateKey!}`,
+            baseAddress: `${data.baseAddress!}`,
+            basePrivateKey: `${data.basePrivateKey!}`,
            
           },
         },

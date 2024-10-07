@@ -9,7 +9,7 @@ export async function ExtendInstanceCommand(ctx: CommandContext<MyContext>) {
   ctx.reply("Starting...");
   //check if the user is resgistered
   const memberUsename = ctx.from!.username;
-  const user = await getUserbyId(ctx.from!.id);
+  const user = await getUserbyId(ctx.from!.id.toString());
   if (!user) {
     ctx.reply("You are not registered. Please register first.");
     await ctx.reply(`Hello, ${memberUsename}. Kindly Register`, {
@@ -17,7 +17,7 @@ export async function ExtendInstanceCommand(ctx: CommandContext<MyContext>) {
     });
     return;
   }
-  ctx.session.tgId=ctx.from?.id!;
+  ctx.session.tgId=ctx.from!.id!.toString();
   await ctx.conversation.enter("ExtendInstanceForm");
 }
 

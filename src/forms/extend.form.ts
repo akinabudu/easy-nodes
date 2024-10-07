@@ -10,7 +10,7 @@ export async function ExtendInstanceForm(
   conversation: Conversation<MyContext>,
   ctx: MyContext
 ) {
-  ctx.session.tgId = ctx.from?.id!;
+  ctx.session.tgId = ctx.from!.id!.toString();
   
   const orderId = await getValidOrderId(conversation, ctx);
   if (!orderId) return; // Exit if no valid order ID
@@ -52,8 +52,8 @@ async function getInstanceDuration(conversation: Conversation<MyContext>, ctx: M
 function calculateTotalCost(instanceType: string, duration: number): number {
   const costPerDay = {
     "t4g.small": 10,
-    "t3a.medium": 20,
-    "t3a.large": 40
+    "t4g.medium": 20,
+    "t4g.large": 40
   };
   return (costPerDay[instanceType as keyof typeof costPerDay] || 0) * duration;
 }

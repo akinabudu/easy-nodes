@@ -1,6 +1,6 @@
 import { airtable, config } from "../lib/config";
 
-export async function getUserbyId(tgId: number) {
+export async function getUserbyId(tgId: string) {
     //   ctx.reply("Please wait...");
     try {
       const records = await airtable(config.airtableUserTableName)

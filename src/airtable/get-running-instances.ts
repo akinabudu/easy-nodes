@@ -1,6 +1,6 @@
 import { airtable, config } from "../lib/config";
 
-export async function getRunningInstances(tgId: number) {
+export async function getRunningInstances(tgId: string) {
   try {
       console.log(tgId)
     const records = await airtable(config.airtableOrderTableName).select({

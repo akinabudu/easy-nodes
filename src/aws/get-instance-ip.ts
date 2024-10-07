@@ -1,7 +1,7 @@
 import { client } from "../lib/aws-client";
 import { DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 
-export const getInstancesIp = async (instanceId: string) => {
+export const getInstancesIp = async (instanceId: string): Promise<string | undefined> => {
   const input = {
     InstanceIds: [instanceId],
   };
@@ -14,10 +14,10 @@ export const getInstancesIp = async (instanceId: string) => {
       return ipAddress;
     } else {
       console.error("Instances not found");
-      return ;
+      return undefined;
     }
   } catch (err) {
     console.error(err);
-    return;
+    return undefined;
   }
 };

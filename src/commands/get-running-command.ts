@@ -12,7 +12,7 @@ export async function GetRunningCommand(ctx: CommandContext<MyContext>) {
   ctx.reply("Getting running instances...");
   //check if the user is resgistered
   const memberUsename = ctx.from!.username;
-  const user = await getUserbyId(ctx.from!.id);
+  const user = await getUserbyId(ctx.from!.id.toString());
   if (!user) {
     ctx.reply("You are not registered. Please register first.");
     await ctx.reply(`Hello, ${memberUsename}. Kindly Register`, {
@@ -20,14 +20,14 @@ export async function GetRunningCommand(ctx: CommandContext<MyContext>) {
     });
     return;
   }
-  ctx.session.tgId = ctx.from?.id!;
+  ctx.session.tgId = ctx.from!.id!.toString();
   await GetRunningInstancesFunction(ctx);
 }
 
 export async function GetRunningInstancesFunction(
   ctx: MyContext
 ) {
-  const runningInstances = await getRunningInstances(ctx.from!.id);
+  const runningInstances = await getRunningInstances(ctx.from!.id.toString());
   if (runningInstances.length === 0) {
     await ctx.reply("No running instances found");
   }

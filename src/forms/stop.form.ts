@@ -9,7 +9,7 @@ export async function StopInstanceForm(
   conversation: Conversation<MyContext>,
   ctx: MyContext
 ) {
-  ctx.session.tgId = ctx.from?.id!;
+  ctx.session.tgId = ctx.from!.id!.toString();
 
   await ctx.reply("Please enter the order ID:");
   ctx.session.instance!.orderId! = await conversation.form.text()!;

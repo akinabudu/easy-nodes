@@ -12,7 +12,7 @@ export const startActions = new Menu<MyContext>("start-actions")
   })
   .text("Stop an Instance", async (ctx) => {
     await ctx.reply(`loading ...`);
-    ctx.session.tgId=ctx.from?.id!;
+    ctx.session.tgId=ctx.from!.id!.toString();
     await ctx.conversation.enter("StopInstanceForm");  })
   .row()
   .text("Running Instances", async (ctx) => {
