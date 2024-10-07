@@ -1,0 +1,60 @@
+import { type CommandContext, InlineKeyboard } from "grammy";
+import type { MyContext } from "../lib/types";
+import { getRunningInstances } from "../airtable/get-running-instances";
+import { getUserbyId } from "../airtable/get-user-id";
+import { register } from "../menus/register.menus";
+import { getDetails } from "../forms/start-instance.form";
+import { mySesssion } from "../../bot";
+import { stopInstance } from "../menus/stop-instance.menu";
+import StopEc2 from "../aws/stop-instance";
+
+export async function GetRunningCommand(ctx: CommandContext<MyContext>) {
+  ctx.reply("Getting running instances...");
+  //check if the user is resgistered
+  const memberUsename = ctx.from!.username;
+  const user = await getUserbyId(ctx.from!.id);
+  if (!user) {
+    ctx.reply("You are not registered. Please register first.");
+    await ctx.reply(`Hello, ${memberUsename}. Kindly Register`, {
+      reply_markup: register,
+    });
+    return;
+  }
+  ctx.session.tgId = ctx.from?.id!;
+  await GetRunningInstancesFunction(ctx);
+}
+
+export async function GetRunningInstancesFunction(
+  ctx: MyContext
+) {
+  const runningInstances = await getRunningInstances(ctx.from!.id);
+  if (runningInstances.length === 0) {
+    await ctx.reply("No running instances found");
+  }
+  runningInstances.map((instance) => {
+    const keyboard = new InlineKeyboard()
+      .text("Stop Instance", `stop_instance:${instance.instanceId}:${instance.orderId}`)
+      .row();
+
+    ctx.reply(
+      `
+            Order ID: <code>${instance.orderId}</code>
+            Name: ${instance.instanceName}
+            IP: <code>${instance.instanceIp}</code>
+            Type: ${getDetails(String(instance.instanceType))}
+            Date Initiated: ${instance.instanceDateInitiated}
+            Expiry: ${instance.instanceDateExpiry}
+            Duration: ${instance.instanceDuration} Days
+            Total Cost: ${instance.instanceTotalCost} USD
+            Username: <code>${instance.instanceUsername}</code>
+            Password: <code>${instance.instancePassword}</code>
+            `,
+      {
+        parse_mode: "HTML",
+        reply_markup: keyboard,
+      }
+    );
+  });
+
+  console.log(runningInstances);
+}

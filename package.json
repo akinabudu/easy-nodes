@@ -1,0 +1,28 @@
+{
+  "name": "instant-vps",
+  "module": "bot.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot run bot.ts",
+    "cron": "bun run cron-job.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node-cron": "^3.0.11"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ec2": "^3.641.0",
+    "@grammyjs/conversations": "^1.2.0",
+    "@grammyjs/menu": "^1.2.2",
+    "@solana/spl-token": "^0.4.8",
+    "@solana/web3.js": "^1.95.3",
+    "airtable": "^0.12.2",
+    "axios": "^1.7.7",
+    "ethers": "^6.13.2",
+    "grammy": "^1.29.0",
+    "node-cron": "^3.0.3"
+  }
+}
