@@ -1,4 +1,4 @@
-# instant-vps
+# Easy Nodes
 
 To install dependencies:
 
