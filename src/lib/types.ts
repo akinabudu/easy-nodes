@@ -28,7 +28,7 @@ export interface SessionData {
     instanceDateExpiry: string
     instanceUsername: string
     instancePassword: string;
-    isInstanceTestnet: boolean;
+    isInstanceMainnet: boolean;
     instanceEthRpcUrl: string;
   };
 }

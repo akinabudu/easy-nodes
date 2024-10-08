@@ -36,11 +36,11 @@ const getServiceByNetwork = (network: string) => {
 
 const handleSuccessfulPayment = async (ctx: MyContext, orderId: string, extend: boolean) => {
   console.log("Handling successful payment");
-  await ctx.reply("Payment confirmed! Starting your instance...");
+  await ctx.reply("Payment confirmed! Starting your node...");
   await sendPaymentConfirmation(ctx, orderId);
 
   const userId = ctx.from!.id!;
-  const { instanceType, instanceName, instanceDuration, instanceDateExpiry, instanceDomain, instanceEthRpcUrl, isInstanceTestnet } = mySesssion[userId].instance!;
+  const { instanceType, instanceName, instanceDuration, instanceDateExpiry, instanceDomain, instanceEthRpcUrl, isInstanceMainnet } = mySesssion[userId].instance!;
 
   const instanceDetails = await startEC2Instance({
     amiId: "ami-0b947c5d5516fa06e",
@@ -48,7 +48,7 @@ const handleSuccessfulPayment = async (ctx: MyContext, orderId: string, extend: 
     instanceName : instanceName || '',
     instanceDomain : instanceDomain || '',
     instanceEthRpcUrl: instanceEthRpcUrl || '',
-    isInstanceTestnet: isInstanceTestnet
+    isInstanceMainnet: isInstanceMainnet
   });
 
   if (extend) {
@@ -85,10 +85,10 @@ const updateSessionWithInstanceDetails = async (userId: number, instanceDetails:
 const provideSSHDetails = async (ctx: MyContext, userId: number) => {
   const { instanceUsername, instancePassword, instanceIp, instanceDomain } = mySesssion[userId].instance!;
   await ctx.reply(
-    `SSH Command:\nRpc Url: <code>${instanceDomain}</code>\n<code>ssh ${instanceUsername}@${instanceIp}</code>\nPassword: <code>${instancePassword}</code>`,
+    `SSH Command:\nRpc Url: <code>${instanceDomain}</code>\n\n<code>ssh ${instanceUsername}@${instanceIp}</code>\nPassword: <code>${instancePassword}</code>`,
     { parse_mode: "HTML" }
   );
-  await ctx.reply(`Please use the above details to connect to your instance. Your RPC node  might take a few hours to initialize.`);
+  await ctx.reply(`Please use the above details to connect to your node. Your RPC node  might take a some minutes to initialize.`);
 };
 
 const handleFailedPayment = async (ctx: MyContext, orderId: string) => {

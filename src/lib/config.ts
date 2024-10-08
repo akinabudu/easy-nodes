@@ -29,6 +29,6 @@ export const airtable = new Airtable({ apiKey: config.airatableApiKey }).base(
   config.airtableBaseId
 );
 
-export const polygonService = new PolygonUSDTService("https://polygon-mainnet.infura.io/v3/a7b4a88d6b694d18b571180c1d90ffee");
-export const solanaService = new SolanaUSDTService("https://mainnet.helius-rpc.com/?api-key=c6d73dfc-9235-4f85-b376-fcff65aa53ca");
-export const baseService = new BaseUSDCService("https://base.drpc.org");
+export const polygonService = new PolygonUSDTService(String(process.env.RPC_URL_POLYGON));
+export const solanaService = new SolanaUSDTService(String(process.env.RPC_URL_SOLANA));
+export const baseService = new BaseUSDCService(String(process.env.RPC_URL_BASE));

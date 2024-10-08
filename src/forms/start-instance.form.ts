@@ -38,14 +38,14 @@ export async function StartInstanceForm(
       },
     )!;
 
-    await ctx.reply("Is this a testnet? (y/n):");
-    const isTestnet = await conversation.form.select(
+    await ctx.reply("Is this a mainnet? (y/n):");
+    const isMainnet = await conversation.form.select(
       ["y", "n"],
       async (ctx) => {
         await ctx.reply("Invalid Input. Please try again.");
       },
     )!;
-    ctx.session.instance!.isInstanceTestnet = isTestnet === "y" ? true : false;
+    ctx.session.instance!.isInstanceMainnet = isMainnet === "y" ? true : false;
 
   await ctx.reply("Choose your vps size:", { reply_markup: instanceType });
   const selectedSize = await conversation.waitForCallbackQuery(
@@ -76,7 +76,7 @@ export async function StartInstanceForm(
     Name: ${mySesssion[ctx.from?.id!].instance!.instanceName!}
     Type: ${getDetails(mySesssion[ctx.from?.id!].instance!.instanceType!)}
     Instance Duration: ${mySesssion[ctx.from?.id!].instance!.instanceDuration!} Weeks
-    Testnet: ${mySesssion[ctx.from?.id!].instance!.isInstanceTestnet ? "Yes" : "No"}
+    Mainnet: ${mySesssion[ctx.from?.id!].instance!.isInstanceMainnet ? "Yes" : "No"}
     EthRPC URL: ${mySesssion[ctx.from?.id!].instance!.instanceEthRpcUrl!}
     Domain: ${mySesssion[ctx.from?.id!].instance!.instanceDomain!}
     ________________

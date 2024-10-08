@@ -10,7 +10,7 @@ interface EC2InstanceConfig {
   instanceType: _InstanceType;
   instanceName: string;
   instanceDomain: string;
-  isInstanceTestnet: boolean;
+  isInstanceMainnet: boolean;
   instanceEthRpcUrl: string;
 }
 
@@ -19,14 +19,21 @@ export default async function startEC2Instance({
   instanceType,
   instanceName,
   instanceDomain,
-  isInstanceTestnet,
+  isInstanceMainnet,
   instanceEthRpcUrl,
-}: EC2InstanceConfig): Promise<{ instanceId: string; instanceUsername: string; instancePassword: string } | { error: string }> {
+}: EC2InstanceConfig): Promise<
+  | { instanceId: string; instanceUsername: string; instancePassword: string }
+  | { error: string }
+> {
   const newUsername = "ec2-user";
   const newPassword = generateRandomPassword();
 
-  const userData = generateUserData(newPassword, instanceDomain, isInstanceTestnet,
-    instanceEthRpcUrl);
+  const userData = generateUserData(
+    newPassword,
+    instanceDomain,
+    isInstanceMainnet,
+    instanceEthRpcUrl
+  );
 
   const params: RunInstancesCommandInput = {
     KeyName: keyPair,
@@ -52,17 +59,24 @@ export default async function startEC2Instance({
         Tags: [{ Key: "Name", Value: instanceName }],
       },
     ],
+    InstanceMarketOptions: {
+      MarketType: "spot",
+      SpotOptions: {
+        SpotInstanceType: "persistent",
+        InstanceInterruptionBehavior: "stop",
+      },
+    },
   };
 
   try {
     const command = new RunInstancesCommand(params);
     const response = await client.send(command);
-    
+
     if (response.Instances && response.Instances[0].InstanceId) {
-      return { 
-        instanceId: response.Instances[0].InstanceId, 
-        instanceUsername: newUsername!, 
-        instancePassword: newPassword! 
+      return {
+        instanceId: response.Instances[0].InstanceId,
+        instanceUsername: newUsername!,
+        instancePassword: newPassword!,
       };
     } else {
       throw new Error("Failed to create EC2 instance");
@@ -70,13 +84,25 @@ export default async function startEC2Instance({
   } catch (error) {
     console.error("Error creating EC2 instance:", error);
     return {
-      error: error instanceof Error ? error.message : "An unknown error occurred",
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
     };
   }
 }
 
-function generateUserData(newPassword: string, domain: string, testnet: boolean, ethRpc: string): string {
-  let SSHD_CONFIG="/etc/ssh/sshd_config"
+function generateUserData(
+  newPassword: string,
+  domain: string,
+  mainnet: boolean,
+  ethRpc: string
+): string {
+  let SSHD_CONFIG = "/etc/ssh/sshd_config";
+  let DOCKER_CONFIG = "$HOME/.docker"
+  
+  let repo_url = mainnet
+    ? "https://github.com/OrglobalTech/base-node-mainnet"
+    : "https://github.com/akinabudu/base-node-testnet";
+  let repo_name = mainnet ? "base-node-mainnet" : "base-node-testnet";
   return `#!/bin/bash
 set -e
 
@@ -106,13 +132,16 @@ log_progress "sshd restarted."
 # Install Docker
 sudo yum install -y docker
 log_progress "Docker installed."
-
-sudo systemctl start docker
-sudo systemctl enable docker
+sudo yum update -y
+sudo service docker start
+sudo usermod -a -G docker ec2-user
 log_progress "Docker service started and enabled."
 
 # Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo mkdir -p ${DOCKER_CONFIG}/cli-plugins
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.29.6/docker-compose-linux-aarch64 -o ${DOCKER_CONFIG}/cli-plugins/docker-compose
+sudo chmod +x ${DOCKER_CONFIG}/cli-plugins/docker-compose
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 log_progress "Docker Compose installed."
 
@@ -123,25 +152,17 @@ log_progress "Git installed."
 cd /home/ec2-user
 log_progress "Changed directory to /home/ec2-user."
 
-# Clone the repository
-git clone https://github.com/akinabudu/base-node
-if [ $? -ne 0 ]; then
+
+log_progress "Attempting to clone ${repo_url}"
+if git clone "${repo_url}"; then
+  cd "${repo_name}"
+  log_progress "Repository cloned successfully and changed directory to ${repo_name}"
+else
   log_progress "Failed to clone repository. Exiting."
   exit 1
 fi
-cd base-node
-log_progress "Repository cloned successfully."
 
-# Modify docker-compose.yml based on testnet parameter
-if [ "${testnet}" = true ]; then
-  sed -i 's/^#\s*-\s*\.env\.sepolia/      - .env.sepolia/' docker-compose.yml
-  sed -i 's/^#\s*-\s*\.env\.sepolia/      - .env.sepolia/' docker-compose.yml
-  log_progress "Docker-compose.yml modified for testnet."
-else
-  sed -i 's/^#\s*-\s*\.env\.mainnet/      - .env.mainnet/' docker-compose.yml
-  sed -i 's/^#\s*-\s*\.env\.mainnet/      - .env.mainnet/' docker-compose.yml
-  log_progress "Docker-compose.yml modified for mainnet."
-fi
+
 
 # Set OP_NODE_L1_ETH_RPC in .env
 echo "" >> .env
@@ -154,7 +175,7 @@ log_progress "Docker-compose started."
 
 # Wait for the service to be up
 log_progress "Waiting for service to be up..."
-sleep 30
+sleep 60
 
 # Run curl command
 curl -d '{"id":0,"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false]}' \
@@ -162,10 +183,55 @@ curl -d '{"id":0,"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["late
 log_progress "Curl command executed."
 
 # Install Caddy
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://yum.caddy.io/caddy.repo
-sudo yum install -y caddy
+sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:/caddy:/stable/openSUSE_Leap_15.5/home:caddy:stable.repo
+sudo dnf install -y caddy
 log_progress "Caddy installed."
+
+# Set up Caddy configuration
+log_progress "Setting up Caddy configuration..."
+cat << EOF > /home/ec2-user/${repo_name}/Caddyfile
+${domain} {
+  reverse_proxy localhost:8545
+}
+EOF
+
+# Update docker-compose.yml to include Caddy
+log_progress "Updating docker-compose.yml to include Caddy..."
+cat << EOF >> /home/ec2-user/${repo_name}/docker-compose.yml
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+    network_mode: host
+
+volumes:
+  caddy_data:
+  caddy_config:
+EOF
+
+# Restart Docker Compose to apply changes
+log_progress "Restarting Docker Compose to apply Caddy changes..."
+cd /home/ec2-user/${repo_name}
+sudo docker-compose down
+sudo docker-compose up -d
+
+log_progress "Caddy setup completed and Docker Compose restarted."
+
+# Run curl command
+curl -d '{"id":0,"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["latest",false]}' \
+  -H "Content-Type: application/json" http://localhost:8545
+log_progress "Curl command executed."
+
 
 # Configure Caddy
 echo "
@@ -185,24 +251,19 @@ log_progress "Setup completed."
 }
 
 function generateRandomPassword(length = 12): string {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+  const charset =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
   return Array.from(crypto.getRandomValues(new Uint32Array(length)))
     .map((x) => charset[x % charset.length])
-    .join('');
+    .join("");
 }
 
-// function generateRandomUsername(): string {
-//   const instancePrefix = Math.random().toString(36).substring(2, 5).toLowerCase();
-//   const userPrefix = Math.random().toString(36).substring(2, 5).toLowerCase();
-//   const randomSuffix = Math.random().toString(36).substring(2, 5);
-//   return `${instancePrefix}${userPrefix}${randomSuffix}`;
-// }
 
 function getStorageSize(instanceType: string): number {
-if (instanceType === "t4g.xlarge") {
+  if (instanceType === "t4g.xlarge") {
+    return 1024;
+  } else if (instanceType === "t4g.2xlarge") {
+    return 1024;
+  }
   return 1024;
-} else if (instanceType === "t4g.2xlarge") {
-  return 1024;
-}
-return 1024;
 }

@@ -27,7 +27,7 @@ export async function StopInstanceForm(
 
   if (isInstanceRunning) {
     await ctx.reply(
-      "The instance is not running or does not exist. Please enter a valid instance ID."
+      "The Node is not running or does not exist. Please enter a valid node ID."
     );
     return
   } else {
@@ -41,12 +41,12 @@ export async function StopInstanceFunction(ctx: MyContext, instanceId: string, o
         await StopEc2(instanceId);
         const updateResult = await UpdateInstanceState(orderId);
         if (updateResult) {
-          await ctx.reply("Instance stopped successfully");
+          await ctx.reply("Node stopped successfully");
         } else {
           await ctx.reply("Failed to update instance state");
         }
       } catch (err) {
         console.error("Error stopping instance:", err);
-        await ctx.reply("An error occurred while stopping the instance");
+        await ctx.reply("An error occurred while stopping the node");
         }
 }

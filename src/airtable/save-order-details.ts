@@ -29,6 +29,9 @@ export async function SaveOrderDetails( data: SessionData) {
             polygonAddress: `${data?.polygonAddress!}`,
             solanaAddress: `${data?.solanaAddress!}`,
             baseAddress: `${data?.baseAddress!}`,
+            isInstanceMainnet: `${data.instance?.isInstanceMainnet!}`,
+            instanceEthRpcUrl: `${data.instance?.instanceEthRpcUrl!}`,
+            instanceDomain: `${data.instance?.instanceDomain!}`,
           },
         },
       ]).then(async(res)=>{

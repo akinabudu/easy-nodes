@@ -60,23 +60,23 @@ bot.use(callBackQueryComposer)
 bot.api.setMyCommands([
   {
     command: "start",
-    description: "Start Global VPS Service",
+    description: "Start Easy Node Service",
   },
   {
-    command: "create_instance",
-    description: "Create a new instance",
+    command: "create_node",
+    description: "Create a new node",
   },
   {
     command: "get_running",
-    description: "Get running instances",
+    description: "Get running nodes",
   },
   // {
   //   command: "stop_instance",
   //   description: "Stop an instance",
   // },
   {
-    command: "extend_instance",
-    description: "Extend an instance",
+    command: "extend_node",
+    description: "Extend a running node",
   },
   {
     command: "help",

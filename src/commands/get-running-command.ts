@@ -9,7 +9,7 @@ import { stopInstance } from "../menus/stop-instance.menu";
 import StopEc2 from "../aws/stop-instance";
 
 export async function GetRunningCommand(ctx: CommandContext<MyContext>) {
-  ctx.reply("Getting running instances...");
+  ctx.reply("Getting running nodes...");
   //check if the user is resgistered
   const memberUsename = ctx.from!.username;
   const user = await getUserbyId(ctx.from!.id.toString());
@@ -29,11 +29,11 @@ export async function GetRunningInstancesFunction(
 ) {
   const runningInstances = await getRunningInstances(ctx.from!.id.toString());
   if (runningInstances.length === 0) {
-    await ctx.reply("No running instances found");
+    await ctx.reply("No running nodes found");
   }
   runningInstances.map((instance) => {
     const keyboard = new InlineKeyboard()
-      .text("Stop Instance", `stop_instance:${instance.instanceId}:${instance.orderId}`)
+      .text("Stop Nodes", `stop_instance:${instance.instanceId}:${instance.orderId}`)
       .row();
 
     ctx.reply(
@@ -48,6 +48,7 @@ export async function GetRunningInstancesFunction(
             Total Cost: ${instance.instanceTotalCost} USD
             Username: <code>${instance.instanceUsername}</code>
             Password: <code>${instance.instancePassword}</code>
+            Domain: <code>${instance.instanceDomain}</code>
             `,
       {
         parse_mode: "HTML",

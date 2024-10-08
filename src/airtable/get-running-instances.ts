@@ -5,7 +5,6 @@ export async function getRunningInstances(tgId: string) {
       console.log(tgId)
     const records = await airtable(config.airtableOrderTableName).select({
       filterByFormula: `AND({instanceStatus} = 'active', {tgId} = '${tgId}')`,
-    //   fields: ['instanceId', 'instanceIp', 'instanceName', 'instanceType', 'instanceDuration', 'tgId']
     }).all();
     return records.map(record => ({
       orderId: record.get('orderId'),
@@ -19,6 +18,8 @@ export async function getRunningInstances(tgId: string) {
       instanceUsername: record.get('instanceUsername'),
       instancePassword: record.get('instancePassword'),
       instanceTotalCost: record.get('instanceTotalCost'),
+      instanceDomain: record.get('instanceDomain'),
+
     }));
   } catch (error) {
     console.error('Error fetching running instances from Airtable:', error);

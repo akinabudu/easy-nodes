@@ -9,10 +9,10 @@ let commandsComposer = new Composer();
 
 let commands: any[] = [
   { name: "start", command: StartCommand },
-  { name: "create_instance", command: CreateInstanceCommand },
+  { name: "create_node", command: CreateInstanceCommand },
   { name: "get_running", command: GetRunningCommand },
   // { name: "stop_instance", command: StopInstanceCommand },
-  { name: "extend_instance", command: ExtendInstanceCommand },
+  { name: "extend_node", command: ExtendInstanceCommand },
   { name: "help", command: HelpCommand },
 ];
 
