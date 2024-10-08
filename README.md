@@ -1,15 +1,22 @@
-# instant-vps
+# Base Node Deployment Telegram Bot
 
-To install dependencies:
+This project is a Telegram bot designed to automate the deployment and management of Base nodes on AWS EC2 instances. It allows users to create, monitor, stop, and extend the runtime of Base nodes through a user-friendly Telegram interface. The bot handles user registration, payment processing (using USDC on the Base network), and instance management.
 
-```bash
-bun install
-```
+## Key Features
 
-To run:
+- User registration and wallet management
+- Node creation with customizable configurations
+- Payment processing and monitoring
+- Instance status monitoring and management
+- Automatic instance termination upon expiry
+- Extension of running instances
 
-```bash
-bun run index.ts
-```
+## Technologies and Services
 
-This project was created using `bun init` in bun v1.1.7. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+- **Bun**: JavaScript runtime
+- **Grammy**: Telegram bot functionality
+- **AWS SDK**: EC2 instance management
+- **Airtable**: Data storage
+- **Docker**: Containerization and deployment
+
+This bot simplifies the process of running Base nodes, making it accessible to users without extensive technical knowledge of cloud infrastructure management.
