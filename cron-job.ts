@@ -1,5 +1,4 @@
 import cron from 'node-cron';
-import { getRunningInstances } from './src/airtable/get-running-instances';
 import StopEc2 from './src/aws/stop-instance';
 import { UpdateInstanceState } from './src/airtable/update-instance-state';
 import { getAllRunningInstances } from './src/airtable/get-all-running-instances';
@@ -26,7 +25,5 @@ async function checkInstanceExpiry() {
   }
 }
 
-// Run the job every day at midnight
-// run the job every 4 hours
-// cron.schedule('0 0 * * *', checkInstanceExpiry);
+
 cron.schedule('0 */4 * * *', checkInstanceExpiry);

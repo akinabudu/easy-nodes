@@ -2,12 +2,10 @@ import { type CommandContext } from "grammy";
 import type { MyContext } from "../lib/types";
 import { getUserbyId } from "../airtable/get-user-id";
 import { register } from "../menus/register.menus";
-import { mySesssion } from "../../bot";
 
 
 export async function CreateInstanceCommand(ctx: CommandContext<MyContext>) {
   ctx.reply("Starting...");
-  //check if the user is resgistered
   const memberUsename = ctx.from!.username;
   const user = await getUserbyId(ctx.from!.id.toString());
   if (!user) {

@@ -1,8 +1,6 @@
 import { Bot } from "grammy";
 import type { MyContext } from "./types";
-// import { TonClient } from "@ton/ton";
 import Airtable from "airtable";
-// import { TonPaymentService } from "../payments/ton.payments";
 import { SolanaUSDTService } from "../payments/solana-payments/solana.payments";
 import { PolygonUSDTService } from "../payments/polygon-payments/polygon.payments";
 import { BaseUSDCService } from "../payments/base-payments/base.payment";

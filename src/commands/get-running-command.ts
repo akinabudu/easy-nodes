@@ -57,5 +57,5 @@ export async function GetRunningInstancesFunction(
     );
   });
 
-  console.log(runningInstances);
+  // console.log(runningInstances);
 }

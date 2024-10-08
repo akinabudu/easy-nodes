@@ -1,6 +1,5 @@
 import { Menu } from "@grammyjs/menu";
 import type { MyContext } from "../lib/types";
-import { getRunningInstances } from "../airtable/get-running-instances";
 import { GetRunningInstancesFunction } from "../commands/get-running-command";
 
 export const startActions = new Menu<MyContext>("start-actions")

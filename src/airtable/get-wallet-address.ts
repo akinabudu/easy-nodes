@@ -21,7 +21,7 @@ export async function getWalletAddress(tgId: string, network: string):Promise<st
       }
     }
 
-    return null; // Return null if no matching record is found
+    return null; 
   } catch (error) {
     console.error("Error fetching wallet address:", error);
     throw error;

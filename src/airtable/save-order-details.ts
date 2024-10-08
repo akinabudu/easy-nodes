@@ -1,7 +1,6 @@
-import type Airtable from "airtable";
 import { airtable, config } from "../lib/config";
-import type { MyContext, SessionData } from "../lib/types";
-import type { AirtableBase } from "airtable/lib/airtable_base";
+import type {  SessionData } from "../lib/types";
+
 
 export async function SaveOrderDetails( data: SessionData) {
 
@@ -35,7 +34,7 @@ export async function SaveOrderDetails( data: SessionData) {
           },
         },
       ]).then(async(res)=>{
-        // console.log("records: ",await res)
+        
         console.log("Order Details saved successfully");
       })
     }

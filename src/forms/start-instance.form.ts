@@ -3,10 +3,8 @@ import type { MyContext } from "../lib/types";
 import { mySesssion } from "../../bot";
 import { instanceType } from "../menus/instance-type.menu";
 import { paymentMethod } from "../menus/make-payment.menus";
-import { InlineKeyboard } from "grammy";
 import type { _InstanceType } from "@aws-sdk/client-ec2";
 
-const noDays= 30
 
 export async function StartInstanceForm(
   conversation: Conversation<MyContext>,

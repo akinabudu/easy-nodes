@@ -1,7 +1,5 @@
-import type Airtable from "airtable";
 import { airtable, config } from "../lib/config";
-import type { MyContext, SessionData } from "../lib/types";
-import type { AirtableBase } from "airtable/lib/airtable_base";
+
 
 export async function SaveExtensionDetails(orderId: string,instanceDuration: number, instanceDateExpiry: string) {
   try {

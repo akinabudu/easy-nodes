@@ -7,7 +7,6 @@ import { mySesssion } from "../../bot";
 
 export async function ExtendInstanceCommand(ctx: CommandContext<MyContext>) {
   ctx.reply("Starting...");
-  //check if the user is resgistered
   const memberUsename = ctx.from!.username;
   const user = await getUserbyId(ctx.from!.id.toString());
   if (!user) {

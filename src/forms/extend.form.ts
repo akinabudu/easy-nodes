@@ -2,7 +2,6 @@ import type { Conversation } from "@grammyjs/conversations";
 import type { MyContext } from "../lib/types";
 import type { _InstanceType } from "@aws-sdk/client-ec2";
 import { mySesssion } from "../../bot";
-import { paymentMethod } from "../menus/make-payment.menus";
 import { getRunningInstances } from "../airtable/get-running-instances";
 import { extendPayment } from "../menus/extend-payment.menu";
 
