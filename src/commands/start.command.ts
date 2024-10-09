@@ -15,10 +15,11 @@ export async function StartCommand(ctx: CommandContext<MyContext>) {
     await ctx.reply(`Hi ${memberUsename}`);
     const member = await getUserbyId(ctx.session.tgId);
     if (member) {
-      await ctx.reply("Welcome back! ");
-      await ctx.reply(`How may I be of Help`, { reply_markup: startActions });
+      await ctx.reply(`Welcome back! ${memberUsename?.toUpperCase()}`, {
+        reply_markup: startActions,
+      });
     } else {
-      await ctx.reply(`Hello, ${memberUsename}. Kindly Register`, {
+      await ctx.reply(`Hello, ${memberUsename?.toUpperCase()}. Kindly Register`, {
         reply_markup: register,
       });
     }
