@@ -7,9 +7,9 @@ This project is a Telegram bot designed to automate the deployment and managemen
 - User registration and wallet management
 - Node creation with customizable configurations
 - Payment processing and monitoring
-- Instance status monitoring and management
-- Automatic instance termination upon expiry
-- Extension of running instances
+- Node status monitoring and management
+- Automatic node termination upon expiry
+- Extension of running nodes
 
 ## Technologies and Services
 

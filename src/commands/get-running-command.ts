@@ -33,7 +33,7 @@ export async function GetRunningInstancesFunction(
   }
   runningInstances.map((instance) => {
     const keyboard = new InlineKeyboard()
-      .text("Stop Nodes", `stop_instance:${instance.instanceId}:${instance.orderId}`)
+      .text("Stop Node", `stop_instance:${instance.instanceId}:${instance.orderId}`)
       .row();
 
     ctx.reply(

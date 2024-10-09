@@ -4,6 +4,7 @@ import {
   RunInstancesCommand,
   type RunInstancesCommandInput,
 } from "@aws-sdk/client-ec2";
+import { githubRepoUrlMainnet, githubRepoUrlTestnet } from "../lib/config";
 
 interface EC2InstanceConfig {
   amiId: string;
@@ -98,11 +99,14 @@ function generateUserData(
 ): string {
   let SSHD_CONFIG = "/etc/ssh/sshd_config";
   let DOCKER_CONFIG = "$HOME/.docker"
-  
+  let folderMainnet = "base-node-mainnet"
+  let folderTestnet = "base-node-testnet"
+
   let repo_url = mainnet
-    ? "https://github.com/OrglobalTech/base-node-mainnet"
-    : "https://github.com/akinabudu/base-node-testnet";
-  let repo_name = mainnet ? "base-node-mainnet" : "base-node-testnet";
+    ? githubRepoUrlMainnet
+    : githubRepoUrlTestnet;
+  let repo_name = mainnet ? folderMainnet : folderTestnet;
+
   return `#!/bin/bash
 set -e
 

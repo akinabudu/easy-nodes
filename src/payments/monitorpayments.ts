@@ -9,7 +9,7 @@ import type { MyContext } from "../lib/types";
 export const monitorPayment = async (ctx: MyContext, network: string, address: string, amount: string, orderId: string, extend: boolean = false) => {
   const service = getServiceByNetwork(network);
   const maxAttempts = 20;
-  const interval = 60000; // 1 minute
+  const interval = 300000; // 5 minutes
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const paid = await service.checkPayment(address, amount);
@@ -19,7 +19,7 @@ export const monitorPayment = async (ctx: MyContext, network: string, address: s
     }
 
     await delay(interval);
-    await notifyOfPendingPayment(ctx, orderId, maxAttempts - attempt - 1);
+    await notifyOfPendingPayment(ctx, orderId, maxAttempts - attempt - interval);
   }
 
   await handleFailedPayment(ctx, orderId);
