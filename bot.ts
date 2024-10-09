@@ -38,7 +38,7 @@ bot.use(
         instanceDateExpiry: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(), // 7 days from now as default
         instanceUsername: "",
         instancePassword: "",
-        isInstanceTestnet: false,
+        isInstanceMainnet: false,
         instanceEthRpcUrl: "",
       },
     }),
@@ -86,3 +86,13 @@ bot.api.setMyCommands([
 
 bot.start();
 console.log("Bot is running");
+// Set bot description
+bot.api.setMyDescription("Welcome to Easy Node Service! This bot helps you manage Base nodes on AWS. You can start, stop, and extend nodes, as well as get information about running instances. Use /start to begin and explore available commands.");
+
+// Catch any errors
+bot.catch((err) => {
+  const ctx = err.ctx;
+  console.error(`Error while handling update ${ctx.update.update_id}:`);
+  console.error(err.error);
+});
+

@@ -12,7 +12,7 @@ export async function StartCommand(ctx: CommandContext<MyContext>) {
     ctx.session.tgId = ctx.from!.id.toString();
     let memberUsename = (ctx.session.tgUsername = ctx.from!.username);
     // console.log(ctx.session.membersId);
-    await ctx.reply(`Hi ${memberUsename}`);
+    await ctx.reply(`Hi ${memberUsename?.toUpperCase()}`);
     const member = await getUserbyId(ctx.session.tgId);
     if (member) {
       await ctx.reply(`Welcome back! ${memberUsename?.toUpperCase()}`, {
