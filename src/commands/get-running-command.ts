@@ -32,8 +32,10 @@ export async function GetRunningInstancesFunction(
     await ctx.reply("No running nodes found");
   }
   runningInstances.map((instance) => {
+    const userId = ctx.from!.id!;
     const keyboard = new InlineKeyboard()
       .text("Stop Node", `stop_instance:${instance.instanceId}:${instance.orderId}`)
+      .text("Extend Node", `extend_instance:${instance.instanceType}:${instance.orderId}:${userId}`)
       .row();
 
     ctx.reply(

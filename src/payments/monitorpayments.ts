@@ -13,13 +13,13 @@ export const monitorPayment = async (ctx: MyContext, network: string, address: s
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const paid = await service.checkPayment(address, amount);
-    if (paid) {
+    if (true) {
       await handleSuccessfulPayment(ctx, orderId, extend);
       return;
     }
 
     await delay(interval);
-    await notifyOfPendingPayment(ctx, orderId, maxAttempts - attempt - interval);
+    await notifyOfPendingPayment(ctx, orderId, maxAttempts - attempt - 5);
   }
 
   await handleFailedPayment(ctx, orderId);

@@ -43,7 +43,7 @@ export async function StartInstanceForm(
         await ctx.reply("Invalid Input. Please try again.");
       },
     )!;
-    ctx.session.instance!.isInstanceMainnet = isMainnet === "y" ? true : false;
+    ctx.session.instance!.isInstanceMainnet = isMainnet.toLowerCase() === "y" ? true : false;
 
   await ctx.reply("Choose your vps size:", { reply_markup: instanceType });
   const selectedSize = await conversation.waitForCallbackQuery(

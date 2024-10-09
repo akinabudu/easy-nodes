@@ -3,6 +3,7 @@ import type { MyContext } from "../lib/types";
 import { getUserbyId } from "../airtable/get-user-id";
 import { register } from "../menus/register.menus";
 import { mySesssion } from "../../bot";
+import { GetRunningInstancesFunction } from "./get-running-command";
 
 
 export async function StopInstanceCommand(ctx: CommandContext<MyContext>) {
@@ -17,8 +18,8 @@ export async function StopInstanceCommand(ctx: CommandContext<MyContext>) {
     });
     return;
   }
-  ctx.session.tgId=ctx.from!.id!.toString();
-  await ctx.conversation.enter("StopInstanceForm");
+  ctx.session.tgId = ctx.from!.id!.toString();
+  await GetRunningInstancesFunction(ctx);
 }
 
 
