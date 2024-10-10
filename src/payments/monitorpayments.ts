@@ -54,7 +54,7 @@ const handleSuccessfulPayment = async (ctx: MyContext, orderId: string, extend: 
   if (extend) {
     await SaveExtensionDetails(orderId, instanceDuration, instanceDateExpiry);
   } else {
-    await updateSessionWithInstanceDetails(userId, instanceDetails, instanceDuration);
+    await updateSessionWithInstanceDetails(userId, instanceDetails!, instanceDuration);
     await provideSSHDetails(ctx, userId);
     await SaveOrderDetails(mySesssion[userId]);
   }
@@ -79,6 +79,7 @@ const updateSessionWithInstanceDetails = async (userId: number, instanceDetails:
     
   });
 
+  await delay(5000); // Wait for 5 seconds
   instance.instanceIp = await getInstancesIp(instance.instanceId!);
 };
 
