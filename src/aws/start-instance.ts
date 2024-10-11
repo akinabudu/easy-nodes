@@ -187,8 +187,9 @@ curl -d '{"id":0,"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["late
 log_progress "Curl command executed."
 
 # Install Caddy
-sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:/caddy:/stable/openSUSE_Leap_15.5/home:caddy:stable.repo
-sudo dnf install -y caddy
+sudo yum install -y yum-plugin-copr
+sudo yum copr enable @caddy/caddy epel-8-aarch64 -y
+sudo yum install -y caddy
 log_progress "Caddy installed."
 
 # Set up Caddy configuration
@@ -199,35 +200,7 @@ ${domain} {
 }
 EOF
 
-# Update docker-compose.yml to include Caddy
-log_progress "Updating docker-compose.yml to include Caddy..."
-cat << EOF >> /home/ec2-user/${repo_name}/docker-compose.yml
 
-  caddy:
-    image: caddy:2
-    container_name: caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - ./site:/srv
-      - caddy_data:/data
-      - caddy_config:/config
-    network_mode: host
-
-volumes:
-  caddy_data:
-  caddy_config:
-EOF
-
-# Restart Docker Compose to apply changes
-log_progress "Restarting Docker Compose to apply Caddy changes..."
-cd /home/ec2-user/${repo_name}
-sudo docker-compose down
-sudo docker-compose up -d
 
 log_progress "Caddy setup completed and Docker Compose restarted."
 
