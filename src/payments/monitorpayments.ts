@@ -13,7 +13,7 @@ export const monitorPayment = async (ctx: MyContext, network: string, address: s
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const paid = await service.checkPayment(address, amount);
-    if (true) {
+    if (paid) {
       await handleSuccessfulPayment(ctx, orderId, extend);
       return;
     }
