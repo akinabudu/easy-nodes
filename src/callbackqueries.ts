@@ -11,7 +11,7 @@ const callBackQueryComposer = new Composer<MyContext>();
 
 callBackQueryComposer.on("callback_query:data", async (ctx) => {
   setSession(ctx.from?.id!);
-  ctx.reply("Stopping Node...");
+  ctx.reply("loading...");
   const data = ctx.callbackQuery.data;
   if (data.startsWith("stop_instance")) {
       const instanceId = data.split(":")[1];
