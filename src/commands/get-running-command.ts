@@ -46,7 +46,7 @@ export async function GetRunningInstancesFunction(
             Type: ${getDetails(String(instance.instanceType))}
             Date Initiated: ${instance.instanceDateInitiated}
             Expiry: ${instance.instanceDateExpiry}
-            Duration: ${instance.instanceDuration} Days
+            Duration: ${instance.instanceDuration} Weeks
             Total Cost: ${instance.instanceTotalCost} USD
             Username: <code>${instance.instanceUsername}</code>
             Password: <code>${instance.instancePassword}</code>

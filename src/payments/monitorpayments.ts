@@ -90,6 +90,8 @@ const provideSSHDetails = async (ctx: MyContext, userId: number) => {
     { parse_mode: "HTML" }
   );
   await ctx.reply(`Please use the above details to connect to your node. Your RPC node  might take a some minutes to initialize.`);
+  await delay(300000);
+  await ctx.reply("node is ready!");
 };
 
 const handleFailedPayment = async (ctx: MyContext, orderId: string) => {
