@@ -29,7 +29,7 @@ export async function StartInstanceForm(
       },
     )!;
 
-    await ctx.reply("Enter your ethrpc node url (example: https://eth-sepolia.blockscout.com/api):");
+    await ctx.reply("Enter your ethrpc node url (example: https://ethereum-rpc.publicnode.com):");
     ctx.session.instance!.instanceEthRpcUrl! = await conversation.form.text(
       async (ctx) => {
         await ctx.reply("Invalid Input. Please try again.");

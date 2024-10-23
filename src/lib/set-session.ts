@@ -1,5 +1,4 @@
-import { getRunningInstances } from "../airtable/get-running-instances";
-import type { mySessionData, SessionData } from "./types";
+
 import { mySesssion } from "../../bot";
 
 export async function setSession(tgId: number): Promise<void> {
