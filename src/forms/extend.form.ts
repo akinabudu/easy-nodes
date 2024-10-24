@@ -27,7 +27,7 @@ async function getInstanceDuration(
   conversation: Conversation<MyContext>,
   ctx: MyContext
 ): Promise<number> {
-  await ctx.reply("How many weeks do you want to pay for?");
+  await ctx.reply("How many days do you want to pay for?");
   return await conversation.form.number(async () => {
     await ctx.reply("Invalid Input. Please try again.");
   });
@@ -54,7 +54,7 @@ async function updateSessionAndReply(
   await ctx.reply(
     `Your Instance Details:
     Order ID: ${orderId}
-    Instance Duration: ${instanceDuration} Weeks
+    Instance Duration: ${instanceDuration} Days
 
     ________________
     Total Cost: ${totalCost} USD

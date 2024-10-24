@@ -56,7 +56,7 @@ export async function StartInstanceForm(
   );
   ctx.session.instance!.instanceType! = selectedSize.update.callback_query.data as _InstanceType;
 
-  await ctx.reply("How many weeks do you want to pay for?");
+  await ctx.reply("How many days do you want to pay for?");
   ctx.session.instance!.instanceDuration! = await conversation.form.number(
     async (ctx) => {
       await ctx.reply("Invalid Input. Please try again.");
@@ -73,7 +73,7 @@ export async function StartInstanceForm(
     `Your Instance Details:
     Name: ${mySesssion[ctx.from?.id!].instance!.instanceName!}
     Type: ${getDetails(mySesssion[ctx.from?.id!].instance!.instanceType!)}
-    Instance Duration: ${mySesssion[ctx.from?.id!].instance!.instanceDuration!} Weeks
+    Instance Duration: ${mySesssion[ctx.from?.id!].instance!.instanceDuration!} Days
     Mainnet: ${mySesssion[ctx.from?.id!].instance!.isInstanceMainnet ? "Yes" : "No"}
     EthRPC URL: ${mySesssion[ctx.from?.id!].instance!.instanceEthRpcUrl!}
     Domain: ${mySesssion[ctx.from?.id!].instance!.instanceDomain!}
@@ -97,9 +97,9 @@ export function getDetails(instancetype: string) {
 }
 function getTotalCost(instancetype: string, duration: number) {
   if (instancetype === "t4g.xlarge") {
-    return 51 * duration;
+    return 8 * duration;
   } else if (instancetype === "t4g.2xlarge") {
-    return 91 * duration;
+    return 13 * duration;
 
   }
 }

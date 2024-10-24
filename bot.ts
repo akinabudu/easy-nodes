@@ -35,7 +35,7 @@ bot.use(
         orderId: "",
         orderDescription: "",
         instanceDateInitiated: new Date().toISOString(),
-        instanceDateExpiry: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString(), // 7 days from now as default
+        instanceDateExpiry: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(), // 1 day from now as default
         instanceUsername: "",
         instancePassword: "",
         isInstanceMainnet: false,
