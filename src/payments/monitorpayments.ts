@@ -7,22 +7,31 @@ import { baseService, config, polygonService, solanaService } from "../lib/confi
 import type { MyContext } from "../lib/types";
 
 export const monitorPayment = async (ctx: MyContext, network: string, address: string, amount: string, orderId: string, extend: boolean = false) => {
-  const service = getServiceByNetwork(network);
-  const maxAttempts = 20;
-  const interval = 300000; // 5 minutes
+  try {
+    const service = getServiceByNetwork(network);
+    const maxAttempts = 20;
+    const interval = 300000; // 5 minutes
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const paid = await service.checkPayment(address, amount);
-    if (true) {
-      await handleSuccessfulPayment(ctx, orderId, extend);
-      return;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        const paid = await service.checkPayment(address, amount);
+        if (true) {
+          await handleSuccessfulPayment(ctx, orderId, extend);
+          return;
+        }
+
+        await delay(interval);
+        await notifyOfPendingPayment(ctx, orderId, maxAttempts - attempt - 5);
+      } catch (error) {
+        console.error(`Error in payment check attempt ${attempt + 1}:`, error);
+      }
     }
 
-    await delay(interval);
-    await notifyOfPendingPayment(ctx, orderId, maxAttempts - attempt - 5);
+    await handleFailedPayment(ctx, orderId);
+  } catch (error) {
+    console.error("Error in monitorPayment:", error);
+    await ctx.reply("An error occurred while monitoring the payment. Please contact support.");
   }
-
-  await handleFailedPayment(ctx, orderId);
 };
 
 const getServiceByNetwork = (network: string) => {
@@ -35,81 +44,106 @@ const getServiceByNetwork = (network: string) => {
 };
 
 const handleSuccessfulPayment = async (ctx: MyContext, orderId: string, extend: boolean) => {
-  console.log("Handling successful payment");
-  await ctx.reply("Payment confirmed! Starting your node...");
-  await sendPaymentConfirmation(ctx, orderId);
+  try {
+    console.log("Handling successful payment");
+    await ctx.reply("Payment confirmed! Starting your node...");
+    await sendPaymentConfirmation(ctx, orderId);
 
-  const userId = ctx.from!.id!;
-  const { instanceType, instanceName, instanceDuration, instanceDateExpiry, instanceDomain, instanceEthRpcUrl, isInstanceMainnet } = mySesssion[userId].instance!;
+    const userId = ctx.from!.id!;
+    const { instanceType, instanceName, instanceDuration, instanceDateExpiry, instanceDomain, instanceEthRpcUrl, isInstanceMainnet } = mySesssion[userId].instance!;
 
-  const instanceDetails = await startEC2Instance({
-    amiId: "ami-0b947c5d5516fa06e",
-    instanceType,
-    instanceName : instanceName || '',
-    instanceDomain : instanceDomain || '',
-    instanceEthRpcUrl: instanceEthRpcUrl || '',
-    isInstanceMainnet: isInstanceMainnet
-  });
+    const instanceDetails = await startEC2Instance({
+      amiId: "ami-0b947c5d5516fa06e",
+      instanceType,
+      instanceName : instanceName || '',
+      instanceDomain : instanceDomain || '',
+      instanceEthRpcUrl: instanceEthRpcUrl || '',
+      isInstanceMainnet: isInstanceMainnet
+    });
 
-  if (extend) {
-    await SaveExtensionDetails(orderId, instanceDuration, instanceDateExpiry);
-  } else {
-    await updateSessionWithInstanceDetails(userId, instanceDetails!, instanceDuration);
-    await provideSSHDetails(ctx, userId);
-    await SaveOrderDetails(mySesssion[userId]);
+    if (extend) {
+      await SaveExtensionDetails(orderId, instanceDuration, instanceDateExpiry);
+    } else {
+      await updateSessionWithInstanceDetails(userId, instanceDetails!, instanceDuration);
+      await provideSSHDetails(ctx, userId);
+      await SaveOrderDetails(mySesssion[userId]);
+    }
+  } catch (error) {
+    console.error("Error in handleSuccessfulPayment:", error);
+    await ctx.reply("An error occurred while processing your payment. Please contact support.");
   }
 };
 
 const sendPaymentConfirmation = async (ctx: MyContext, orderId: string) => {
-  const message = `Payment for order <code>${orderId}</code> has been confirmed!`;
-  await Promise.all([
-    ctx.api.sendMessage(config.adminUserId, message, { parse_mode: "HTML" }),
-    ctx.api.sendMessage(ctx.from?.id!, message, { parse_mode: "HTML" })
-  ]);
+  try {
+    const message = `Payment for order <code>${orderId}</code> has been confirmed!`;
+    await Promise.all([
+      ctx.api.sendMessage(config.adminUserId, message, { parse_mode: "HTML" }),
+      ctx.api.sendMessage(ctx.from?.id!, message, { parse_mode: "HTML" })
+    ]);
+  } catch (error) {
+    console.error("Error in sendPaymentConfirmation:", error);
+  }
 };
 
 const updateSessionWithInstanceDetails = async (userId: number, instanceDetails: any, instanceDuration: number) => {
-  const instance = mySesssion[userId].instance!;
-  Object.assign(instance, {
-    ...instanceDetails,
-    instanceStatus: "active",
-    paymentStatus: "paid",
-    instanceDateInitiated: new Date().toISOString(),
-    instanceDateExpiry: new Date(Date.now() + instanceDuration *7* 24 * 60 * 60 * 1000).toISOString(),
-    
-  });
+  try {
+    const instance = mySesssion[userId].instance!;
+    Object.assign(instance, {
+      ...instanceDetails,
+      instanceStatus: "active",
+      paymentStatus: "paid",
+      instanceDateInitiated: new Date().toISOString(),
+      instanceDateExpiry: new Date(Date.now() + instanceDuration * 24 * 60 * 60 * 1000).toISOString(),
+    });
 
-  await delay(5000); // Wait for 5 seconds
-  instance.instanceIp = await getInstancesIp(instance.instanceId!);
+    await delay(5000); // Wait for 5 seconds
+    instance.instanceIp = await getInstancesIp(instance.instanceId!);
+  } catch (error) {
+    console.error("Error in updateSessionWithInstanceDetails:", error);
+  }
 };
 
 const provideSSHDetails = async (ctx: MyContext, userId: number) => {
-  const { instanceUsername, instancePassword, instanceIp, instanceDomain } = mySesssion[userId].instance!;
-  await ctx.reply(
-    `SSH Command:\nRpc Url: <code>${instanceDomain}</code>\n\n<code>ssh ${instanceUsername}@${instanceIp}</code>\nPassword: <code>${instancePassword}</code>`,
-    { parse_mode: "HTML" }
-  );
-  await ctx.reply(`Please use the above details to connect to your node. Your RPC node  might take a some minutes to initialize.`);
-  await delay(300000);
-  await ctx.reply("node is ready!");
+  try {
+    const { instanceUsername, instancePassword, instanceIp, instanceDomain } = mySesssion[userId].instance!;
+    await ctx.reply(
+      `SSH Command:\nRpc Url: <code>${instanceDomain}</code>\n\n<code>ssh ${instanceUsername}@${instanceIp}</code>\nPassword: <code>${instancePassword}</code>`,
+      { parse_mode: "HTML" }
+    );
+    await ctx.reply(`Please use the above details to connect to your node. Your RPC node might take a few minutes to initialize.`);
+    await delay(300000);
+    await ctx.reply("Your node is ready!");
+  } catch (error) {
+    console.error("Error in provideSSHDetails:", error);
+    await ctx.reply("An error occurred while providing SSH details. Please contact support.");
+  }
 };
 
 const handleFailedPayment = async (ctx: MyContext, orderId: string) => {
-  const message = `Payment for order <code>${orderId}</code> has failed or expired.`;
-  await Promise.all([
-    ctx.api.sendMessage(config.adminUserId, message, { parse_mode: "HTML" }),
-    ctx.api.sendMessage(ctx.from?.id!, message, { parse_mode: "HTML" })
-  ]);
+  try {
+    const message = `Payment for order <code>${orderId}</code> has failed or expired.`;
+    await Promise.all([
+      ctx.api.sendMessage(config.adminUserId, message, { parse_mode: "HTML" }),
+      ctx.api.sendMessage(ctx.from?.id!, message, { parse_mode: "HTML" })
+    ]);
+  } catch (error) {
+    console.error("Error in handleFailedPayment:", error);
+  }
 };
 
 const notifyOfPendingPayment = async (ctx: MyContext, orderId: string, remainingAttempts: number) => {
-  const remainingMinutes = remainingAttempts;
-  const message = `Payment status for order <code>${orderId}</code> is still pending. ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''} remaining for payment confirmation. Please check later.`;
-  
-  await Promise.all([
-    ctx.api.sendMessage(config.adminUserId, message, { parse_mode: "HTML" }),
-    ctx.api.sendMessage(ctx.from?.id!, message, { parse_mode: "HTML" })
-  ]);
+  try {
+    const remainingMinutes = remainingAttempts;
+    const message = `Payment status for order <code>${orderId}</code> is still pending. ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''} remaining for payment confirmation. Please check later.`;
+    
+    await Promise.all([
+      ctx.api.sendMessage(config.adminUserId, message, { parse_mode: "HTML" }),
+      ctx.api.sendMessage(ctx.from?.id!, message, { parse_mode: "HTML" })
+    ]);
+  } catch (error) {
+    console.error("Error in notifyOfPendingPayment:", error);
+  }
 };
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
