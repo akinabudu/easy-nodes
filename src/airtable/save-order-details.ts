@@ -33,10 +33,10 @@ export async function SaveOrderDetails( data: SessionData) {
             instanceDomain: `${data.instance?.instanceDomain!}`,
           },
         },
-      ]).then(async(res)=>{
-        
-        console.log("Order Details saved successfully");
-      })
+      ])
+        if (records) {
+          console.log("Order Details saved successfully");
+        }
     }
   } catch (error) {
     console.log("Error saving order details");

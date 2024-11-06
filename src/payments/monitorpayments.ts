@@ -15,7 +15,7 @@ export const monitorPayment = async (ctx: MyContext, network: string, address: s
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         const paid = await service.checkPayment(address, amount);
-        if (true) {
+        if (paid) {
           await handleSuccessfulPayment(ctx, orderId, extend);
           return;
         }
@@ -98,6 +98,7 @@ const updateSessionWithInstanceDetails = async (userId: number, instanceDetails:
     });
 
     await delay(5000); // Wait for 5 seconds
+    console.log("instanceDetails created", instanceDetails);
     instance.instanceIp = await getInstancesIp(instance.instanceId!);
   } catch (error) {
     console.error("Error in updateSessionWithInstanceDetails:", error);
